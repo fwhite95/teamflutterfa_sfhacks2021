@@ -40,16 +40,20 @@ class _AddAddressViewState extends State<AddAddressView> {
           controller: _controller,
           readOnly: true,
           onTap: () async {
-            print('textfield');
+        
             final sessionToken = Uuid().v4();
             final Suggestion result = await showSearch(
               context: context, 
               delegate: AddressSearch(sessionToken),
               );
               if(result != null){
-                print('HEre!');
+                final placeDetails = await PlaceApiProvider(sessionToken)
+                    .getPlaceDetailFromId(result.placeId);
                 setState(() {
+                  //add result.description or name to new list for listTile
                   _controller.text = result.description;
+                  print('placeDetails: $placeDetails');
+                  
                 });
               }
           },

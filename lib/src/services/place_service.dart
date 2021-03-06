@@ -5,18 +5,26 @@ import 'package:http/http.dart';
 import 'package:teamflutterfa_sfhacks2021/src/util/config.dart';
 
 class Place {
+  String streetNumber;
+  String street;
+  String city;
+  String zipCode;
   String lat;
-  String lan;
+  String lng;
 
   Place({
+    this.streetNumber,
+    this.street,
+    this.city,
+    this.zipCode,
     this.lat,
-    this.lan,
+    this.lng,
   });
 
   @override
   String toString() {
-      return 'Place(lat: $lat, lan: $lan)';
-    }
+    return 'Place(lat: $lat, lng: $lng)';
+  }
 }
 
 class Suggestion {
@@ -27,8 +35,8 @@ class Suggestion {
 
   @override
   String toString() {
-      return 'Suggestion(description: $description, placeId: $placeId)';
-    }
+    return 'Suggestion(description: $description, placeId: $placeId)';
+  }
 }
 
 class PlaceApiProvider {
@@ -37,21 +45,20 @@ class PlaceApiProvider {
   PlaceApiProvider(this.sessionToken);
 
   final sessionToken;
-  
+
   Future<List<Suggestion>> fetchSuggestions(String input, String lang) async {
     final request =
         'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=$googleApiKey&sessiontoken=$sessionToken';
     final response = await client.get(request);
 
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       final result = json.decode(response.body);
-      print('result: $result');
-      if(result['status'] == 'OK') {
+      if (result['status'] == 'OK') {
         return result['predictions']
-        .map<Suggestion>((p) => Suggestion(p['place_id'], p['description']))
-        .toList();
+            .map<Suggestion>((p) => Suggestion(p['place_id'], p['description']))
+            .toList();
       }
-      if(result['status'] == 'ZERO_RESULTS') {
+      if (result['status'] == 'ZERO_RESULTS') {
         return [];
       }
       throw Exception(result['error_message']);
@@ -61,14 +68,26 @@ class PlaceApiProvider {
   }
 
 //get more details about the place from the placeId.
-//Use this to get lat lang? 
+//Use this to get lat lang?
   Future<Place> getPlaceDetailFromId(String placeId) async {
     final request =
-        'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=address_component&key=$googleApiKey&sessiontoken=$sessionToken';
+        'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=geometry/location&key=$googleApiKey&sessiontoken=$sessionToken';
     final response = await client.get(request);
 
-    if(response.statusCode == 200) {
-
+    if (response.statusCode == 200) {
+      final result = json.decode(response.body);
+      if (result['status'] == 'OK') {
+        print('Result: $result');
+        final place = Place();
+        
+        place.lat = result['result']['geometry']['location']['lat'].toString();
+        place.lng = result['result']['geometry']['location']['lng'].toString();
+        
+        return place;
+      }
+      throw Exception(result['error_message']);
+    }else {
+      throw Exception('Failed to fetch suggestion');
     }
   }
 }

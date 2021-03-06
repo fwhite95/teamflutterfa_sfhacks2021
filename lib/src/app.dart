@@ -8,7 +8,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'FlutterFA',
-      home: HomeView(), //AddAddressView(),
+      home: AddAddressView(),
     );
   }
 }
