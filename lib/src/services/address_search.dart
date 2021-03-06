@@ -40,6 +40,7 @@ class AddressSearch extends SearchDelegate<Suggestion> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    //print('langauge: ${Localizations.localeOf(context).languageCode}');
     return FutureBuilder(
       future: query == ''
           ? null

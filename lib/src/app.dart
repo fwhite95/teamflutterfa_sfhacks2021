@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teamflutterfa_sfhacks2021/src/views/add_address_view.dart';
@@ -9,8 +8,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'FlutterFA',
-      home: AddAddressView(),
+      home: HomeView(), //AddAddressView(),
     );
   }
-
 }

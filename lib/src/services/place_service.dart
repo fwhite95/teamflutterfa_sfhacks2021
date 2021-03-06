@@ -4,6 +4,21 @@ import 'dart:io';
 import 'package:http/http.dart';
 import 'package:teamflutterfa_sfhacks2021/src/util/config.dart';
 
+class Place {
+  String lat;
+  String lan;
+
+  Place({
+    this.lat,
+    this.lan,
+  });
+
+  @override
+  String toString() {
+      return 'Place(lat: $lat, lan: $lan)';
+    }
+}
+
 class Suggestion {
   final String placeId;
   final String description;
@@ -25,7 +40,7 @@ class PlaceApiProvider {
   
   Future<List<Suggestion>> fetchSuggestions(String input, String lang) async {
     final request =
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&types=address&language=$lang&components=country:ch&key=$googleApiKey&sessiontoken=$sessionToken';
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=$googleApiKey&sessiontoken=$sessionToken';
     final response = await client.get(request);
 
     if(response.statusCode == 200) {
@@ -47,7 +62,13 @@ class PlaceApiProvider {
 
 //get more details about the place from the placeId.
 //Use this to get lat lang? 
-  // Future<Place> getPlaceDetailFromId(String placeId) async {
+  Future<Place> getPlaceDetailFromId(String placeId) async {
+    final request =
+        'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=address_component&key=$googleApiKey&sessiontoken=$sessionToken';
+    final response = await client.get(request);
 
-  // }
+    if(response.statusCode == 200) {
+
+    }
+  }
 }
