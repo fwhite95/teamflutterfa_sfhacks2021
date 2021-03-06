@@ -10,6 +10,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  List<String> address = [];
 
   @override
   void initState(){
@@ -21,11 +22,22 @@ class _HomeViewState extends State<HomeView> {
     super.dispose();
   }
 
+  Widget _emptyBody() {
+    return Center(
+      child: Text('Please add an address'),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Added Addresses'),
+        title: Text('Addresses'),
+        actions: [
+          IconButton(icon: Icon(Icons.add), onPressed: () {
+
+          }),
+        ],
       ),
       body: Center(
         child: Text('Hello World'),
