@@ -71,6 +71,7 @@ class _HomeViewState extends State<HomeView> {
       }
     }
 
+    
     _currentPosition = await location.getLocation();
     print('locationData: $_currentPosition');
 
@@ -89,7 +90,6 @@ class _HomeViewState extends State<HomeView> {
           if(meter < 20){
             _arrived = true;
             print('I arrived');
-            //_showNotification();
           }else if(_arrived && meter > 10 && meter < 30){
             print('I am leaving here');
             _showNotification();
@@ -100,6 +100,7 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+//changed to pull list from DB
   Widget _listBody() {
     return ListView.builder(
       itemCount: address.length,

@@ -85,6 +85,7 @@ class _AddAddressViewState extends State<AddAddressView> {
                     if(_nameController.text == ''){
                       _nameController.text = 'Default';
                     }
+                    //Add location to DB instead
                 widget.address
                     .add(MyLocation(_nameController.text, placeDetails));
                   Navigator.pop(context);
