@@ -154,24 +154,7 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
         );
-        // return Container(
-        //   child: ListTile(
-        //     title: Text(address[index].name),
-        //     subtitle: Text(
-        //         'lat: ${address[index].place.lat.toString()} , lng: ${address[index].place.lng.toString()}'),
-        //     trailing: IconButton(
-        //       icon: Icon(Icons.delete),
-        //       onPressed: () {
-        //         setState(() {
-        //           address.removeAt(index);
-        //         });
-        //       },
-        //     ),
-        //   ),
-        //   decoration: BoxDecoration(
-        //     border: Border.all(color: Colors.black),
-        //   ),
-        // );
+        
       },
     );
   }
