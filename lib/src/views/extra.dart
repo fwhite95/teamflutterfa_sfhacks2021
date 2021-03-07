@@ -112,20 +112,14 @@ class _MapUIState extends State<MapUI> {
           widget.currentPosition.latitude, widget.currentPosition.longitude),
       zoom: 14.4,
     );
-    
+    setInitPosition();
   }
 
   void setInitPosition() async {
-    String text = await getAddress(
+    await getAddress(
         coordinates: Coordinates(
             widget.currentPosition.latitude, widget.currentPosition.longitude));
-    setState(() {
-      addressText = text;
-      final Place place = Place(
-          lat: widget.currentPosition.latitude.toString(),
-          lng: widget.currentPosition.longitude.toString());
-      myLocation = MyLocation(addressText, place);
-    });
+    
   }
 
   @override
