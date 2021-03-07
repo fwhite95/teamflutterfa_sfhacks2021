@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:latlong/latlong.dart';
+import 'package:location/location.dart';
 import 'package:teamflutterfa_sfhacks2021/src/services/place_service.dart';
-import 'package:teamflutterfa_sfhacks2021/src/util/config.dart';
 import 'package:teamflutterfa_sfhacks2021/src/views/add_address_view.dart';
 
 class HomeView extends StatefulWidget {
@@ -14,15 +14,60 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   List<MyLocation> address = [];
+  LocationData _currentPosition;
+  Location location = Location();
+  final Distance distance = Distance();
+  int meterDistance;
 
   @override
   void initState() {
     super.initState();
+    getCurrentLocation();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  getCurrentLocation() async {
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        throw Exception('Location services not enabled');
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        throw Exception('Location permission not granted');
+      }
+    }
+
+    _currentPosition = await location.getLocation();
+    print('locationData: $_currentPosition');
+
+    location.onLocationChanged.listen((LocationData currentLocation) {
+      print('Stream: $currentLocation');
+      setState(() {
+        _currentPosition = currentLocation;
+      });
+      if (address.isNotEmpty) {
+        for (MyLocation temp in address) {
+          double meter = distance(
+            LatLng(double.parse(temp.place.lat), double.parse(temp.place.lng)),
+            LatLng(_currentPosition.latitude, _currentPosition.longitude),
+          );
+          print('Meter: $meter');
+        }
+      }
+    });
   }
 
   Widget _listBody() {

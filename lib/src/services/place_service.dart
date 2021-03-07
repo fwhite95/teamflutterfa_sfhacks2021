@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart';
+import 'package:location/location.dart';
 import 'package:teamflutterfa_sfhacks2021/src/util/config.dart';
 
 class MyLocation {
   String name = 'Default';
   Place place;
 
-  MyLocation(String title, Place place){
+  MyLocation(String title, Place place) {
     this.name = title;
     this.place = place;
   }
@@ -23,7 +24,6 @@ class Place {
     this.lat,
     this.lng,
   });
-  
 
   @override
   String toString() {
@@ -83,15 +83,17 @@ class PlaceApiProvider {
       if (result['status'] == 'OK') {
         print('Result: $result');
         final place = Place();
-        
+
         place.lat = result['result']['geometry']['location']['lat'].toString();
         place.lng = result['result']['geometry']['location']['lng'].toString();
-        
+
         return place;
       }
       throw Exception(result['error_message']);
-    }else {
+    } else {
       throw Exception('Failed to fetch suggestion');
     }
   }
+
+  
 }
