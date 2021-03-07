@@ -44,6 +44,7 @@ class _MapUIState extends State<MapUI> {
 
   CameraPosition initialLocation;
   Suggestion suggestion;
+  Place place;
 
   void updateMarkerAndCircle(
       LocationData newLocalData, LatLng newLocalDatalatlng) async {
@@ -191,6 +192,7 @@ class _MapUIState extends State<MapUI> {
                         final placeDetails = await PlaceApiProvider(Uuid().v4())
                             .getPlaceDetailFromId(result.placeId);
                         setState(() {
+                          place = placeDetails;
                           addressText = result.description;
                           suggestion = result;
                           getCurrentLocation(LatLng(
@@ -447,7 +449,15 @@ class _MapUIState extends State<MapUI> {
             height: height * 0.05,
           ),
           InkWell(
-            onTap: () async {},
+            //add to address list or add to DB
+            onTap: () async {
+              final MyLocation myLocation = MyLocation(addressType, place);
+              myLocation.address = addressText;
+              myLocation.notes = addressController.text;
+              widget.address
+                    .add(myLocation);
+                  Navigator.pop(context);
+            },
             child: Container(
               width: width,
               decoration: BoxDecoration(

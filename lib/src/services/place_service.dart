@@ -9,6 +9,7 @@ class MyLocation {
   String name = 'Default';
   Place place;
   String address;
+  String notes;
 
   MyLocation(String title, Place place) {
     this.name = title;
