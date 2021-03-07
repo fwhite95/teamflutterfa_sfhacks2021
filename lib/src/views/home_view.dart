@@ -23,7 +23,6 @@ class _HomeViewState extends State<HomeView> {
   int meterDistance;
 
   bool _arrived = false;
-  
 
   @override
   void initState() {
@@ -43,13 +42,12 @@ class _HomeViewState extends State<HomeView> {
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker');
-    const NotificationDetails platformChannelSpecifics = 
-      NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
 
-      await flutterLocalNotificationsPlugin.show(
-              0, 'Hello From Mask Reminder', 'Wear a mask', platformChannelSpecifics,
-              payload: 'item x');
-            
+    await flutterLocalNotificationsPlugin.show(
+        0, 'Hello From Mask Reminder', 'Wear a mask', platformChannelSpecifics,
+        payload: 'item x');
   }
 
   getCurrentLocation() async {
@@ -72,11 +70,10 @@ class _HomeViewState extends State<HomeView> {
       }
     }
 
-    
     _currentPosition = await location.getLocation();
     print('locationData: $_currentPosition');
 
-    location.onLocationChanged.listen((LocationData currentLocation) async{
+    location.onLocationChanged.listen((LocationData currentLocation) async {
       print('Stream: $currentLocation');
       setState(() {
         _currentPosition = currentLocation;
@@ -88,10 +85,10 @@ class _HomeViewState extends State<HomeView> {
             LatLng(_currentPosition.latitude, _currentPosition.longitude),
           );
           print('Meter: $meter');
-          if(meter < 20){
+          if (meter < 20) {
             _arrived = true;
             print('I arrived');
-          }else if(_arrived && meter > 10 && meter < 30){
+          } else if (_arrived && meter > 10 && meter < 30) {
             print('I am leaving here');
             _showNotification();
             _arrived = false;
@@ -106,24 +103,75 @@ class _HomeViewState extends State<HomeView> {
     return ListView.builder(
       itemCount: address.length,
       itemBuilder: (context, index) {
-        return Container(
-          child: ListTile(
-            title: Text(address[index].name),
-            subtitle: Text(
-                'lat: ${address[index].place.lat.toString()} , lng: ${address[index].place.lng.toString()}'),
-            trailing: IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () {
-                setState(() {
-                  address.removeAt(index);
-                });
-              },
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.grey[300], blurRadius: 2, spreadRadius: 2)
+              ],
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Titletext(
+                          address[index].name + ' Address',
+                          fontweight: FontWeight.w900,
+                          size: 18,
+                          color: Colors.orange,
+                        ),
+                        Divider(
+                          color: Colors.black,
+                          endIndent: MediaQuery.of(context).size.width * 0.25,
+                        ),
+                        Titletext(
+                          address[index].address,
+                          maxLine: 2,
+                        ),
+                      ],
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      setState(() {
+                        address.removeAt(index);
+                      });
+                    },
+                    child: Icon(Icons.delete),
+                  )
+                ],
+              ),
             ),
           ),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.black),
-          ),
         );
+        // return Container(
+        //   child: ListTile(
+        //     title: Text(address[index].name),
+        //     subtitle: Text(
+        //         'lat: ${address[index].place.lat.toString()} , lng: ${address[index].place.lng.toString()}'),
+        //     trailing: IconButton(
+        //       icon: Icon(Icons.delete),
+        //       onPressed: () {
+        //         setState(() {
+        //           address.removeAt(index);
+        //         });
+        //       },
+        //     ),
+        //   ),
+        //   decoration: BoxDecoration(
+        //     border: Border.all(color: Colors.black),
+        //   ),
+        // );
       },
     );
   }
@@ -151,11 +199,13 @@ class _HomeViewState extends State<HomeView> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => 
-                      // AddAddressView(
-                      //       address: address,
-                      //     )),
-                      MapUI(address: address, currentPosition: _currentPosition)),
+                      builder: (context) =>
+                          // AddAddressView(
+                          //       address: address,
+                          //     )),
+                          MapUI(
+                              address: address,
+                              currentPosition: _currentPosition)),
                 ).then(onGoBack);
               }),
         ],
