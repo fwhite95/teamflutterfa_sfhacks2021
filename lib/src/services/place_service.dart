@@ -4,22 +4,26 @@ import 'dart:io';
 import 'package:http/http.dart';
 import 'package:teamflutterfa_sfhacks2021/src/util/config.dart';
 
+class MyLocation {
+  String name = 'Default';
+  Place place;
+
+  MyLocation(String title, Place place){
+    this.name = title;
+    this.place = place;
+  }
+}
+
 class Place {
-  String streetNumber;
-  String street;
-  String city;
-  String zipCode;
   String lat;
   String lng;
+  String name;
 
   Place({
-    this.streetNumber,
-    this.street,
-    this.city,
-    this.zipCode,
     this.lat,
     this.lng,
   });
+  
 
   @override
   String toString() {
