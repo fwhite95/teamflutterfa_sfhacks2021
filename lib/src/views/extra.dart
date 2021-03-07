@@ -45,6 +45,7 @@ class _MapUIState extends State<MapUI> {
   CameraPosition initialLocation;
   Suggestion suggestion;
   Place place;
+  MyLocation myLocation;
 
   void updateMarkerAndCircle(
       LocationData newLocalData, LatLng newLocalDatalatlng) async {
@@ -111,6 +112,20 @@ class _MapUIState extends State<MapUI> {
           widget.currentPosition.latitude, widget.currentPosition.longitude),
       zoom: 14.4,
     );
+    
+  }
+
+  void setInitPosition() async {
+    String text = await getAddress(
+        coordinates: Coordinates(
+            widget.currentPosition.latitude, widget.currentPosition.longitude));
+    setState(() {
+      addressText = text;
+      final Place place = Place(
+          lat: widget.currentPosition.latitude.toString(),
+          lng: widget.currentPosition.longitude.toString());
+      myLocation = MyLocation(addressText, place);
+    });
   }
 
   @override
@@ -451,12 +466,14 @@ class _MapUIState extends State<MapUI> {
           InkWell(
             //add to address list or add to DB
             onTap: () async {
-              final MyLocation myLocation = MyLocation(addressType, place);
-              myLocation.address = addressText;
-              myLocation.notes = addressController.text;
-              widget.address
-                    .add(myLocation);
-                  Navigator.pop(context);
+              setState(() {
+                myLocation = MyLocation(addressType, place);
+                myLocation.address = addressText;
+                myLocation.notes = addressController.text;
+              });
+
+              widget.address.add(myLocation);
+              Navigator.pop(context);
             },
             child: Container(
               width: width,
