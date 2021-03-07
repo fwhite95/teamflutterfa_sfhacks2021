@@ -18,7 +18,6 @@ class MyLocation {
 class Place {
   String lat;
   String lng;
-  String name;
 
   Place({
     this.lat,

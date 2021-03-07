@@ -99,9 +99,354 @@ class _MapUIState extends State<MapUI> {
     super.dispose();
   }
 
+  Widget locationMap() {
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          height: height * 0.5,
+          child: GoogleMap(
+            mapToolbarEnabled: false,
+            zoomControlsEnabled: false,
+            onTap: (value) async {
+              await getCurrentLocation(value).then((value) => {});
+
+              setState(() {});
+            },
+            mapType: MapType.normal,
+            initialCameraPosition: initialLocation,
+            compassEnabled: false,
+            markers: Set.of((marker != null) ? [marker] : []),
+            circles: Set.of((circle != null) ? [circle] : []),
+            onMapCreated: (GoogleMapController controller) async {
+              _controller = controller;
+              await getCurrentLocation(null)
+                  .then((value) => {locationFound = true});
+              setState(() {});
+            },
+          ),
+        ),
+        Positioned.fill(
+            child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Align(
+              alignment: Alignment.topLeft,
+              child: Container(
+                child: BackIconBackGroundBlur(
+                  backIconColor: Colors.grey[900],
+                ),
+              )),
+        ))
+      ],
+    );
+  }
+
+  Widget mapButtom() {
+    return Container(
+      height: height * 0.08,
+      width: width,
+      decoration: BoxDecoration(color: Colors.white, boxShadow: [
+        BoxShadow(color: Colors.grey[300], blurRadius: 1, spreadRadius: 1)
+      ]),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
+        child: locationFound
+            ? Row(
+                children: [
+                  Icon(
+                    Icons.map,
+                    color: Colors.orange,
+                    size: 30,
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Container(
+                    width: width * 0.85,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Titletext(
+                          addressText,
+                          size: 18,
+                          fontweight: FontWeight.bold,
+                        ),
+                        Titletext(
+                            "Tap anywhere on the map to change the location",
+                            size: 12,
+                            color: Colors.grey)
+                      ],
+                    ),
+                  ),
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        height: 15,
+                        width: 15,
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.orange),
+                          strokeWidth: 3,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Titletext(
+                        "Please Wait...",
+                        size: 18,
+                        fontweight: FontWeight.w900,
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                    child: Titletext(
+                      "while we automatically get your location",
+                      size: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
+
+  Widget locationDetailsSelector() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextFormField(
+            controller: addressController,
+            decoration: InputDecoration(
+                prefixIcon: Icon(Icons.location_city),
+                labelText: "Flat No, Area, Landmark etc.",
+                labelStyle: TextStyle(color: Colors.grey),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black, width: 2.0),
+                    borderRadius: BorderRadius.circular(10)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.orange, width: 4.0),
+                )),
+          ),
+          SizedBox(
+            height: height * 0.025,
+          ),
+          Titletext(
+            "Save Address As",
+            color: Colors.black,
+            fontweight: FontWeight.w900,
+            size: 18,
+          ),
+          SizedBox(
+            height: height * 0.015,
+          ),
+          Container(
+            height: 45,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                InkWell(
+                  onTap: () {
+                    addressType = "Home";
+                    addressTypebool = [true, false, false];
+                    setState(() {});
+                  },
+                  child: Container(
+                    width: 100,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color:
+                              addressTypebool[0] ? Colors.orange : Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey[300],
+                                blurRadius: 1,
+                                spreadRadius: 1)
+                          ]),
+                      height: 50,
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.home,
+                              color: addressTypebool[0]
+                                  ? Colors.white
+                                  : Colors.orange,
+                              size: 20,
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Titletext(
+                              "Home",
+                              color: addressTypebool[0]
+                                  ? Colors.white
+                                  : Colors.orange,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: InkWell(
+                    onTap: () {
+                      addressType = "Office";
+
+                      addressTypebool = [false, true, false];
+                      setState(() {});
+                    },
+                    child: Container(
+                      width: 100,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey[300],
+                                blurRadius: 1,
+                                spreadRadius: 1)
+                          ],
+                          color:
+                              addressTypebool[1] ? Colors.orange : Colors.white,
+                        ),
+                        height: 50,
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.work,
+                                color: addressTypebool[1]
+                                    ? Colors.white
+                                    : Colors.orange,
+                                size: 20,
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Titletext(
+                                "Office",
+                                color: addressTypebool[1]
+                                    ? Colors.white
+                                    : Colors.orange,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    addressType = "Other";
+
+                    addressTypebool = [false, false, true];
+                    setState(() {});
+                  },
+                  child: Container(
+                    width: 100,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color:
+                              addressTypebool[2] ? Colors.orange : Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey[300],
+                                blurRadius: 1,
+                                spreadRadius: 1)
+                          ]),
+                      height: 50,
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.map,
+                                size: 20,
+                                color: addressTypebool[2]
+                                    ? Colors.white
+                                    : Colors.orange),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Titletext(
+                              "Other",
+                              color: addressTypebool[2]
+                                  ? Colors.white
+                                  : Colors.orange,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: height * 0.05,
+          ),
+          InkWell(
+            onTap: () async {},
+            child: Container(
+              width: width,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(40),
+                  color: Colors.orange),
+              height: height * 0.075,
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      FlutterIcons.add_location_mdi,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Titletext(
+                      "Add Address",
+                      color: Colors.white,
+                      size: 18,
+                      fontweight: FontWeight.w900,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-     height = MediaQuery.of(context).size.height;
+    height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
     return SafeArea(
       child: Scaffold(
@@ -109,356 +454,12 @@ class _MapUIState extends State<MapUI> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Stack(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    height: height * 0.5,
-                    child: GoogleMap(
-                      mapToolbarEnabled: false,
-                      zoomControlsEnabled: false,
-                      onTap: (value) async {
-                        await getCurrentLocation(value).then((value) => {});
-
-                        setState(() {});
-                      },
-                      mapType: MapType.normal,
-                      initialCameraPosition: initialLocation,
-                      compassEnabled: false,
-                      markers: Set.of((marker != null) ? [marker] : []),
-                      circles: Set.of((circle != null) ? [circle] : []),
-                      onMapCreated: (GoogleMapController controller) async {
-                        _controller = controller;
-                        await getCurrentLocation(null)
-                            .then((value) => {locationFound = true});
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                  Positioned.fill(
-                      child: Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Container(
-                          child: BackIconBackGroundBlur(
-                            backIconColor: Colors.grey[900],
-                          ),
-                        )),
-                  ))
-                ],
-              ),
-              Container(
-                height: height * 0.08,
-                width: width,
-                decoration: BoxDecoration(color: Colors.white, boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey[300], blurRadius: 1, spreadRadius: 1)
-                ]),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
-                  child: locationFound
-                      ? Row(
-                          children: [
-                            Icon(
-                              Icons.map,
-                              color: Colors.orange,
-                              size: 30,
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Container(
-                              width: width * 0.85,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Titletext(
-                                    addressText,
-                                    size: 18,
-                                    fontweight: FontWeight.bold,
-                                  ),
-                                  Titletext(
-                                      "Tap anywhere on the map to change the location",
-                                      size: 12,
-                                      color: Colors.grey)
-                                ],
-                              ),
-                            ),
-                          ],
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  height: 15,
-                                  width: 15,
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.orange),
-                                    strokeWidth: 3,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 12,
-                                ),
-                                Titletext(
-                                  "Please Wait...",
-                                  size: 18,
-                                  fontweight: FontWeight.w900,
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 28.0),
-                              child: Titletext(
-                                "while we automatically get your location",
-                                size: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                ),
-              ),
+              locationMap(),
+              mapButtom(),
               SizedBox(
                 height: height * 0.01,
               ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFormField(
-                      controller: addressController,
-                      decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.location_city),
-                          labelText: "Flat No, Area, Landmark etc.",
-                          labelStyle: TextStyle(color: Colors.grey),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.black, width: 2.0),
-                              borderRadius: BorderRadius.circular(10)),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide:
-                                BorderSide(color: Colors.orange, width: 4.0),
-                          )),
-                    ),
-                    SizedBox(
-                      height: height * 0.025,
-                    ),
-                    Titletext(
-                      "Save Address As",
-                      color: Colors.black,
-                      fontweight: FontWeight.w900,
-                      size: 18,
-                    ),
-                    SizedBox(
-                      height: height * 0.015,
-                    ),
-                    Container(
-                      height: 45,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              addressType = "Home";
-                              addressTypebool = [true, false, false];
-                              setState(() {});
-                            },
-                            child: Container(
-                              width: 100,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: addressTypebool[0]
-                                        ? Colors.orange
-                                        : Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: Colors.grey[300],
-                                          blurRadius: 1,
-                                          spreadRadius: 1)
-                                    ]),
-                                height: 50,
-                                child: Center(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.home,
-                                        color: addressTypebool[0]
-                                            ? Colors.white
-                                            : Colors.orange,
-                                        size: 20,
-                                      ),
-                                      SizedBox(
-                                        width: 4,
-                                      ),
-                                      Titletext(
-                                        "Home",
-                                        color: addressTypebool[0]
-                                            ? Colors.white
-                                            : Colors.orange,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 12.0),
-                            child: InkWell(
-                              onTap: () {
-                                addressType = "Office";
-
-                                addressTypebool = [false, true, false];
-                                setState(() {});
-                              },
-                              child: Container(
-                                width: 100,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: Colors.grey[300],
-                                          blurRadius: 1,
-                                          spreadRadius: 1)
-                                    ],
-                                    color: addressTypebool[1]
-                                        ? Colors.orange
-                                        : Colors.white,
-                                  ),
-                                  height: 50,
-                                  child: Center(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.work,
-                                          color: addressTypebool[1]
-                                              ? Colors.white
-                                              : Colors.orange,
-                                          size: 20,
-                                        ),
-                                        SizedBox(
-                                          width: 4,
-                                        ),
-                                        Titletext(
-                                          "Office",
-                                          color: addressTypebool[1]
-                                              ? Colors.white
-                                              : Colors.orange,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              addressType = "Other";
-
-                              addressTypebool = [false, false, true];
-                              setState(() {});
-                            },
-                            child: Container(
-                              width: 100,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: addressTypebool[2]
-                                        ? Colors.orange
-                                        : Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: Colors.grey[300],
-                                          blurRadius: 1,
-                                          spreadRadius: 1)
-                                    ]),
-                                height: 50,
-                                child: Center(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.map,
-                                          size: 20,
-                                          color: addressTypebool[2]
-                                              ? Colors.white
-                                              : Colors.orange),
-                                      SizedBox(
-                                        width: 4,
-                                      ),
-                                      Titletext(
-                                        "Other",
-                                        color: addressTypebool[2]
-                                            ? Colors.white
-                                            : Colors.orange,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: height * 0.05,
-                    ),
-                    InkWell(
-                      onTap: () async {},
-                      child: Container(
-                        width: width,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(40),
-                            color: Colors.orange),
-                        height: height * 0.075,
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(
-                                FlutterIcons.add_location_mdi,
-                                color: Colors.white,
-                                size: 18,
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Titletext(
-                                "Add Address",
-                                color: Colors.white,
-                                size: 18,
-                                fontweight: FontWeight.w900,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              locationDetailsSelector(),
             ],
           ),
         ),

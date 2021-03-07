@@ -8,6 +8,7 @@ import 'package:location/location.dart';
 import 'package:teamflutterfa_sfhacks2021/main.dart';
 import 'package:teamflutterfa_sfhacks2021/src/services/place_service.dart';
 import 'package:teamflutterfa_sfhacks2021/src/views/add_address_view.dart';
+import 'package:teamflutterfa_sfhacks2021/src/views/extra.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -142,6 +143,7 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Addresses'),
+        backgroundColor: Colors.orange,
         actions: [
           IconButton(
               icon: Icon(Icons.add),
@@ -149,9 +151,11 @@ class _HomeViewState extends State<HomeView> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => AddAddressView(
-                            address: address,
-                          )),
+                      builder: (context) => 
+                      // AddAddressView(
+                      //       address: address,
+                      //     )),
+                      MapUI()),
                 ).then(onGoBack);
               }),
         ],
