@@ -30,17 +30,17 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_google_places: ^0.2.8
   google_place: ^0.3.3
-  firebase_core: ^1.0.0
-  firebase_auth: ^1.0.0
-  google_sign_in: ^5.0.0
-  cloud_firestore: ^1.0.0
-
   http: ^0.12.1
   uuid: ^2.0.4
   location: ^3.0.0
   latlong: ^0.6.1
   flutter_local_notifications: ^4.0.1+2
-
+  cloud_firestore:
+  firebase_core:
+  firebase_auth:
+  google_sign_in:
+  fluttertoast:
+    
 dev_dependencies:
   flutter_test:
     sdk: flutter
