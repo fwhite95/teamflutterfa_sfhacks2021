@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:latlong/latlong.dart';
 import 'package:location/location.dart';
+import 'package:teamflutterfa_sfhacks2021/main.dart';
 import 'package:teamflutterfa_sfhacks2021/src/services/place_service.dart';
 import 'package:teamflutterfa_sfhacks2021/src/views/add_address_view.dart';
 
@@ -19,6 +21,9 @@ class _HomeViewState extends State<HomeView> {
   final Distance distance = Distance();
   int meterDistance;
 
+  bool _arrived = false;
+  
+
   @override
   void initState() {
     super.initState();
@@ -28,6 +33,22 @@ class _HomeViewState extends State<HomeView> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  _showNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+            'your channel id', 'your channel name', 'your channel description',
+            importance: Importance.max,
+            priority: Priority.high,
+            ticker: 'ticker');
+    const NotificationDetails platformChannelSpecifics = 
+      NotificationDetails(android: androidPlatformChannelSpecifics);
+
+      await flutterLocalNotificationsPlugin.show(
+              0, 'Hello From Mask Reminder', 'Wear a mask', platformChannelSpecifics,
+              payload: 'item x');
+            
   }
 
   getCurrentLocation() async {
@@ -53,7 +74,7 @@ class _HomeViewState extends State<HomeView> {
     _currentPosition = await location.getLocation();
     print('locationData: $_currentPosition');
 
-    location.onLocationChanged.listen((LocationData currentLocation) {
+    location.onLocationChanged.listen((LocationData currentLocation) async{
       print('Stream: $currentLocation');
       setState(() {
         _currentPosition = currentLocation;
@@ -65,6 +86,15 @@ class _HomeViewState extends State<HomeView> {
             LatLng(_currentPosition.latitude, _currentPosition.longitude),
           );
           print('Meter: $meter');
+          if(meter < 20){
+            _arrived = true;
+            print('I arrived');
+            //_showNotification();
+          }else if(_arrived && meter > 10 && meter < 30){
+            print('I am leaving here');
+            _showNotification();
+            _arrived = false;
+          }
         }
       }
     });

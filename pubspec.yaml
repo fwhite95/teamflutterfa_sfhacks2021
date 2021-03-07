@@ -34,6 +34,7 @@ dependencies:
   uuid: ^2.0.4
   location: ^3.0.0
   latlong: ^0.6.1
+  flutter_local_notifications: ^4.0.1+2
 
 dev_dependencies:
   flutter_test:
