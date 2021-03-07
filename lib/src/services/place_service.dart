@@ -8,6 +8,7 @@ import 'package:teamflutterfa_sfhacks2021/src/util/config.dart';
 class MyLocation {
   String name = 'Default';
   Place place;
+  String address;
 
   MyLocation(String title, Place place) {
     this.name = title;

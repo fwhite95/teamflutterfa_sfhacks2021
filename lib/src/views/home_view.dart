@@ -155,7 +155,7 @@ class _HomeViewState extends State<HomeView> {
                       // AddAddressView(
                       //       address: address,
                       //     )),
-                      MapUI()),
+                      MapUI(address: address, currentPosition: _currentPosition)),
                 ).then(onGoBack);
               }),
         ],

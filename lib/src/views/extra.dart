@@ -7,8 +7,20 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:teamflutterfa_sfhacks2021/src/services/address_search.dart';
+import 'package:teamflutterfa_sfhacks2021/src/services/place_service.dart';
+import 'package:uuid/uuid.dart';
 
 class MapUI extends StatefulWidget {
+  final List<MyLocation> address;
+  final LocationData currentPosition;
+
+  MapUI({
+    Key key,
+    this.address,
+    this.currentPosition,
+  }) : super(key: key);
+
   @override
   _MapUIState createState() => _MapUIState();
 }
@@ -30,10 +42,8 @@ class _MapUIState extends State<MapUI> {
   double height;
   double width;
 
-  static final CameraPosition initialLocation = CameraPosition(
-    target: LatLng(43.6571971, -79.3810463),
-    zoom: 14.4746,
-  );
+  CameraPosition initialLocation;
+  Suggestion suggestion;
 
   void updateMarkerAndCircle(
       LocationData newLocalData, LatLng newLocalDatalatlng) async {
@@ -89,6 +99,17 @@ class _MapUIState extends State<MapUI> {
     var first = addresses?.first;
     addressText = '${first.addressLine ?? ""}';
     addressText.replaceAll("null", " ");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    //getCurrentLocation(LatLng(widget.currentPosition.latitude, widget.currentPosition.longitude));
+    initialLocation = CameraPosition(
+      target: LatLng(
+          widget.currentPosition.latitude, widget.currentPosition.longitude),
+      zoom: 14.4,
+    );
   }
 
   @override
@@ -156,16 +177,34 @@ class _MapUIState extends State<MapUI> {
         child: locationFound
             ? Row(
                 children: [
-                  Icon(
-                    Icons.map,
+                  IconButton(
+                    icon: Icon(
+                      Icons.search,
+                    ),
                     color: Colors.orange,
-                    size: 30,
+                    onPressed: () async {
+                      final Suggestion result = await showSearch(
+                        context: context,
+                        delegate: AddressSearch(Uuid().v4()),
+                      );
+                      if (result != null) {
+                        final placeDetails = await PlaceApiProvider(Uuid().v4())
+                            .getPlaceDetailFromId(result.placeId);
+                        setState(() {
+                          addressText = result.description;
+                          suggestion = result;
+                          getCurrentLocation(LatLng(
+                              double.parse(placeDetails.lat),
+                              double.parse(placeDetails.lng)));
+                        });
+                      }
+                    },
                   ),
                   SizedBox(
                     width: 8,
                   ),
                   Container(
-                    width: width * 0.85,
+                    width: width * 0.65,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
