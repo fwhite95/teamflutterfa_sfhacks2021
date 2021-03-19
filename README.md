@@ -1,16 +1,10 @@
 # teamflutterfa_sfhacks2021
+Mask Helper: App created for SFHacks 2021
 
-A new Flutter project.
+## About
 
-## Getting Started
+This is a project created for SFHacks 2021. This app called Mask Helper keeps track of the user and when they leave a assigned location they are given a notification reminder to wear a mask. 
 
-This project is a starting point for a Flutter application.
+## Technologies
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Built using Flutter, Google Maps API, and Google Places API. 
